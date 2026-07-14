@@ -1,0 +1,97 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  PROJECT_MANAGER
+  TEAM_LEADER
+  TEAM_MEMBER
+  PROJECT_SPONSOR
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(TEAM_MEMBER)
+  designation String?
+  resetPasswordToken   String?
+  resetPasswordExpires DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  managedProjects Project[]       @relation("ManagerProjects")
+  projects        ProjectMember[]
+  tasks           Task[]
+}
+
+model Project {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  startDate   DateTime?
+  endDate     DateTime?
+  budget      Float?
+  scope       String?
+  goals       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  managerId Int
+  manager   User @relation("ManagerProjects", fields: [managerId], references: [id])
+
+  members ProjectMember[]
+  tasks   Task[]
+}
+
+model ProjectMember {
+  projectId Int
+  userId    Int
+  createdAt DateTime @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([projectId, userId])
+}
+
+model Task {
+  id          Int        @id @default(autoincrement())
+  title       String
+  description String?
+  status      TaskStatus   @default(TODO)
+  priority    TaskPriority @default(MEDIUM)
+  dueDate     DateTime?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  projectId Int
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  assigneeId Int?
+  assignee   User? @relation(fields: [assigneeId], references: [id])
+
+  dependencies Task[] @relation("TaskDependencies")
+  dependentOn  Task[] @relation("TaskDependencies")
+}

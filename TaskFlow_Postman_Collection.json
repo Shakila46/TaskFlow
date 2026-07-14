@@ -1,0 +1,48 @@
+{
+	"info": {
+		"name": "TaskFlow API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type","value": "application/json"}],
+						"url": {"raw": "http://localhost:5000/api/auth/login","protocol": "http","host": ["localhost"],"port": "5000","path": ["api","auth","login"]},
+						"body": {"mode": "raw","raw": "{\"email\": \"admin@example.com\", \"password\": \"password123\"}"}
+					}
+				}
+			]
+		},
+		{
+			"name": "Projects",
+			"item": [
+				{
+					"name": "Get All Projects",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {"raw": "http://localhost:5000/api/projects","protocol": "http","host": ["localhost"],"port": "5000","path": ["api","projects"]}
+					}
+				}
+			]
+		},
+		{
+			"name": "Tasks",
+			"item": [
+				{
+					"name": "Get All Tasks",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {"raw": "http://localhost:5000/api/tasks","protocol": "http","host": ["localhost"],"port": "5000","path": ["api","tasks"]}
+					}
+				}
+			]
+		}
+	]
+}

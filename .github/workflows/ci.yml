@@ -1,0 +1,43 @@
+name: TaskFlow CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        
+    - name: Install Backend Dependencies
+      run: |
+        cd backend
+        npm ci || npm install
+        
+    - name: Generate Prisma Client
+      run: |
+        cd backend
+        npx prisma generate
+        
+    - name: Install Frontend Dependencies
+      run: |
+        cd frontend
+        npm ci || npm install
+        
+    - name: Build Frontend
+      run: |
+        cd frontend
+        npm run build
