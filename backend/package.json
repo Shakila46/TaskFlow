@@ -7,7 +7,8 @@
     "test": "cross-env NODE_ENV=test NODE_OPTIONS='--experimental-vm-modules' jest --runInBand --detectOpenHandles --forceExit",
     "dev": "npx tsx watch src/index.ts",
     "build": "npx prisma generate",
-    "start": "npx tsx src/index.ts"
+    "start": "npx tsx src/index.ts",
+    "postinstall": "prisma generate"
   },
   "keywords": [],
   "author": "",
