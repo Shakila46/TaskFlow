@@ -94,48 +94,36 @@ import bcrypt from 'bcryptjs';
 
 app.get('/api/seed', async (req, res) => {
   try {
-    const existingUsers = await prisma.user.count();
-    if (existingUsers > 0) {
-      return res.json({ message: 'Dummy data already exists!' });
-    }
-
+    const existingAdmin = await prisma.user.findUnique({ where: { email: 'admin@cyphlab.com' } });
+    const existingManager = await prisma.user.findUnique({ where: { email: 'manager@cyphlab.com' } });
+    const existingMember = await prisma.user.findUnique({ where: { email: 'user@cyphlab.com' } });
+    
+    let admin = existingAdmin;
+    let manager = existingManager;
+    let member = existingMember;
+    
     const hashedPassword = await bcrypt.hash('123456', 10);
 
-    // Create Dummy Users
-    const admin = await prisma.user.create({
-      data: {
-        name: 'Admin User',
-        email: 'admin@cyphlab.com',
-        password: hashedPassword,
-        role: 'ADMIN',
-        designation: 'System Administrator'
-      }
-    });
-
-    const manager = await prisma.user.create({
-      data: {
-        name: 'Project Manager',
-        email: 'manager@cyphlab.com',
-        password: hashedPassword,
-        role: 'PROJECT_MANAGER',
-        designation: 'Senior Manager'
-      }
-    });
-
-    const member = await prisma.user.create({
-      data: {
-        name: 'Team Member',
-        email: 'user@cyphlab.com',
-        password: hashedPassword,
-        role: 'TEAM_MEMBER',
-        designation: 'Frontend Developer'
-      }
-    });
+    if (!admin) {
+      admin = await prisma.user.create({
+        data: { name: 'Admin User', email: 'admin@cyphlab.com', password: hashedPassword, role: 'ADMIN', designation: 'System Administrator' }
+      });
+    }
+    if (!manager) {
+      manager = await prisma.user.create({
+        data: { name: 'Project Manager', email: 'manager@cyphlab.com', password: hashedPassword, role: 'PROJECT_MANAGER', designation: 'Senior Manager' }
+      });
+    }
+    if (!member) {
+      member = await prisma.user.create({
+        data: { name: 'Team Member', email: 'user@cyphlab.com', password: hashedPassword, role: 'TEAM_MEMBER', designation: 'Frontend Developer' }
+      });
+    }
 
     // Create a Dummy Project
     const project = await prisma.project.create({
       data: {
-        title: 'CyphLab Rebranding',
+        title: 'CyphLab Rebranding - Phase ' + Math.floor(Math.random() * 100),
         description: 'Complete redesign of CyphLab website and assets.',
         managerId: manager.id,
         members: {
@@ -147,30 +135,24 @@ app.get('/api/seed', async (req, res) => {
       }
     });
 
-    // Create some Tasks
-    await prisma.task.createMany({
-      data: [
-        {
-          title: 'Design UI Mockups',
-          description: 'Create Figma mockups for the new homepage',
-          status: 'IN_PROGRESS',
-          priority: 'HIGH',
+    // Create 15 Dummy Tasks
+    const tasksData = [];
+    for (let i = 1; i <= 15; i++) {
+       const statuses = ['TODO', 'IN_PROGRESS', 'DONE'];
+       const priorities = ['LOW', 'MEDIUM', 'HIGH'];
+       tasksData.push({
+          title: `Dummy Task ${i} for Project ${project.id}`,
+          description: `This is the description for dummy task ${i}. Needs to be completed on time.`,
+          status: statuses[i % 3] as any,
+          priority: priorities[i % 3] as any,
           projectId: project.id,
-          assigneeId: member.id,
-          dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-        },
-        {
-          title: 'Setup Database',
-          description: 'Configure Supabase and Prisma schema',
-          status: 'DONE',
-          priority: 'HIGH',
-          projectId: project.id,
-          assigneeId: admin.id
-        }
-      ]
-    });
+          assigneeId: i % 2 === 0 ? admin.id : member.id,
+          dueDate: new Date(Date.now() + i * 24 * 60 * 60 * 1000)
+       });
+    }
+    await prisma.task.createMany({ data: tasksData });
 
-    res.json({ success: true, message: 'Dummy data added successfully!' });
+    res.json({ success: true, message: '15 Dummy tasks and users added successfully!' });
   } catch (error) {
     res.status(500).json({ success: false, error: error instanceof Error ? error.message : String(error) });
   }
