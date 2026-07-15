@@ -1,5 +1,4 @@
 import { PrismaClient } from '@prisma/client';
-import { PrismaPg } from '@prisma/adapter-pg';
 import dotenv from 'dotenv';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -12,7 +11,8 @@ dotenv.config({ path: resolve(__dirname, '../../.env') });
 
 const isTest = process.env.NODE_ENV === 'test';
 const connectionString = (isTest ? process.env['DATABASE_URL_TEST'] : process.env['DATABASE_URL']) ?? '';
-const adapter = new PrismaPg({ connectionString });
-const prisma = new PrismaClient({ adapter });
+const prisma = new PrismaClient({
+  datasourceUrl: connectionString,
+});
 
 export default prisma;
