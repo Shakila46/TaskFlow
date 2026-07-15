@@ -6,9 +6,9 @@
   "scripts": {
     "test": "cross-env NODE_ENV=test NODE_OPTIONS='--experimental-vm-modules' jest --runInBand --detectOpenHandles --forceExit",
     "dev": "npx tsx watch src/index.ts",
-    "build": "npx prisma generate && npx prisma db push --accept-data-loss",
+    "build": "npx prisma@5.22.0 generate",
     "start": "npx tsx src/index.ts",
-    "postinstall": "prisma generate"
+    "postinstall": "npx prisma@5.22.0 generate"
   },
   "keywords": [],
   "author": "",
