@@ -30,7 +30,7 @@ export default function SponsorDashboard() {
 
   const fetchData = async (token: string) => {
     try {
-      const projRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/projects`, {
+      const projRes = await fetch(`https://backend-xi-orcin-43.vercel.app/api/projects`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (projRes.ok) {

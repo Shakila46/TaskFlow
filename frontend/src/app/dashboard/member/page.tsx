@@ -33,10 +33,10 @@ export default function MemberDashboard() {
 
   const fetchData = async (token: string) => {
     try {
-      const projRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/projects`, {
+      const projRes = await fetch(`https://backend-xi-orcin-43.vercel.app/api/projects`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      const taskRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tasks`, {
+      const taskRes = await fetch(`https://backend-xi-orcin-43.vercel.app/api/tasks`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
@@ -50,7 +50,7 @@ export default function MemberDashboard() {
   const handleStatusChange = async (taskId: number, newStatus: string) => {
     const token = localStorage.getItem('token');
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tasks/${taskId}/status`, {
+      const res = await fetch(`https://backend-xi-orcin-43.vercel.app/api/tasks/${taskId}/status`, {
         method: 'PATCH',
         headers: { 
           'Content-Type': 'application/json',

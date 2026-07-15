@@ -17,6 +17,11 @@ export default function AdminDashboard() {
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newUser, setNewUser] = useState({ name: '', email: '', password: '', role: 'PROJECT_MANAGER' });
+  
+  // Edit Modal state
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editUser, setEditUser] = useState({ id: 0, name: '', email: '', role: '', designation: '' });
+
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -41,7 +46,7 @@ export default function AdminDashboard() {
 
   const fetchAllTasks = async (token: string) => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tasks`, {
+      const res = await fetch(`https://backend-xi-orcin-43.vercel.app/api/tasks`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) setAllTasks(await res.json());
@@ -52,7 +57,7 @@ export default function AdminDashboard() {
 
   const fetchUsers = async (token: string) => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users`, {
+      const res = await fetch(`https://backend-xi-orcin-43.vercel.app/api/users`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) setUsers(await res.json());
@@ -66,7 +71,7 @@ export default function AdminDashboard() {
     setLoading(true);
     const token = localStorage.getItem('token');
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users`, {
+      const res = await fetch(`https://backend-xi-orcin-43.vercel.app/api/users`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -95,7 +100,7 @@ export default function AdminDashboard() {
       const payload: any = {};
       payload[field] = value;
       
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/${userId}`, {
+      const res = await fetch(`https://backend-xi-orcin-43.vercel.app/api/users/${userId}`, {
         method: 'PATCH',
         headers: { 
           'Content-Type': 'application/json',
@@ -113,11 +118,43 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleSaveEditedUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    const token = localStorage.getItem('token');
+    try {
+      const res = await fetch(`https://backend-xi-orcin-43.vercel.app/api/users/${editUser.id}`, {
+        method: 'PATCH',
+        headers: { 
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}` 
+        },
+        body: JSON.stringify({
+          name: editUser.name,
+          email: editUser.email,
+          role: editUser.role,
+          designation: editUser.designation
+        }),
+      });
+      if (res.ok) {
+        setIsEditModalOpen(false);
+        fetchUsers(token!);
+      } else {
+        const errorData = await res.json();
+        alert(errorData.message || 'Failed to update user');
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleDeleteUser = async (userId: number) => {
     if (!confirm('Are you sure you want to delete this user?')) return;
     const token = localStorage.getItem('token');
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/${userId}`, {
+      const res = await fetch(`https://backend-xi-orcin-43.vercel.app/api/users/${userId}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -220,7 +257,16 @@ export default function AdminDashboard() {
                         <td>
                           <div className="table-actions">
                             <button 
-                              onClick={() => alert('Edit User feature coming soon!')}
+                              onClick={() => {
+                                setEditUser({
+                                  id: u.id,
+                                  name: u.name,
+                                  email: u.email,
+                                  role: u.role,
+                                  designation: u.designation || ''
+                                });
+                                setIsEditModalOpen(true);
+                              }}
                               style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', background: 'var(--accent-primary)', border: 'none', color: 'white', cursor: 'pointer', padding: '0.4rem 0.8rem', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 500 }}
                               title="Edit User"
                             >
@@ -285,6 +331,50 @@ export default function AdminDashboard() {
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1.5rem' }}>
             <button type="button" className="btn-secondary" onClick={() => setIsModalOpen(false)}>Cancel</button>
             <button type="submit" className="btn-primary" disabled={loading}>Create User</button>
+          </div>
+        </form>
+      </Modal>
+
+      {/* Edit User Modal */}
+      <Modal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} title="Edit User">
+        <form onSubmit={handleSaveEditedUser}>
+          <div className="input-group">
+            <label>Full Name</label>
+            <input className="input-field" value={editUser.name} onChange={e => setEditUser({...editUser, name: e.target.value})} required />
+          </div>
+          <div className="input-group">
+            <label>Email Address</label>
+            <input type="email" className="input-field" value={editUser.email} onChange={e => setEditUser({...editUser, email: e.target.value})} required />
+          </div>
+          <div className="input-group">
+            <label>Role</label>
+            <select className="input-field" value={editUser.role} onChange={e => setEditUser({...editUser, role: e.target.value})}>
+              <option value="TEAM_MEMBER">Team Member</option>
+              <option value="TEAM_LEADER">Team Leader</option>
+              <option value="PROJECT_MANAGER">Project Manager</option>
+              <option value="PROJECT_SPONSOR">Project Sponsor</option>
+              <option value="ADMIN">Admin</option>
+            </select>
+          </div>
+          <div className="input-group">
+            <label>Designation</label>
+            <select className="input-field" value={editUser.designation} onChange={e => setEditUser({...editUser, designation: e.target.value})}>
+              <option value="">No Designation</option>
+              <option value="Front-end Engineer">Front-end Engineer</option>
+              <option value="Back-end Engineer">Back-end Engineer</option>
+              <option value="Fullstack Engineer">Fullstack Engineer</option>
+              <option value="QA Engineer">QA Engineer</option>
+              <option value="UX/UI Designer">UX/UI Designer</option>
+              <option value="Business Analyst (BA)">Business Analyst (BA)</option>
+              <option value="Tech Lead / Software Architect">Tech Lead / Software Architect</option>
+              <option value="DevOps / Cloud Engineer">DevOps / Cloud Engineer</option>
+              <option value="AI / ML Engineer">AI / ML Engineer</option>
+            </select>
+          </div>
+          
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1.5rem' }}>
+            <button type="button" className="btn-secondary" onClick={() => setIsEditModalOpen(false)}>Cancel</button>
+            <button type="submit" className="btn-primary" disabled={loading}>Save Changes</button>
           </div>
         </form>
       </Modal>

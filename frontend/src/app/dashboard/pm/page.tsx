@@ -48,13 +48,13 @@ export default function PMDashboard() {
 
   const fetchData = async (token: string) => {
     try {
-      const projRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/projects`, {
+      const projRes = await fetch(`https://backend-xi-orcin-43.vercel.app/api/projects`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      const taskRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tasks`, {
+      const taskRes = await fetch(`https://backend-xi-orcin-43.vercel.app/api/tasks`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      const userRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users`, {
+      const userRes = await fetch(`https://backend-xi-orcin-43.vercel.app/api/users`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
@@ -87,7 +87,7 @@ export default function PMDashboard() {
         scope: newProject.scope || undefined,
         goals: newProject.goals || undefined
       };
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/projects`, {
+      const res = await fetch(`https://backend-xi-orcin-43.vercel.app/api/projects`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -136,7 +136,7 @@ export default function PMDashboard() {
         dependencyIds: newTask.dependencyIds
       };
       
-      const url = editingTaskId ? `${process.env.NEXT_PUBLIC_API_URL}/tasks/${editingTaskId}` : `${process.env.NEXT_PUBLIC_API_URL}/tasks`;
+      const url = editingTaskId ? `https://backend-xi-orcin-43.vercel.app/api/tasks/${editingTaskId}` : `https://backend-xi-orcin-43.vercel.app/api/tasks`;
       const method = editingTaskId ? 'PUT' : 'POST';
       
       const res = await fetch(url, {
@@ -163,7 +163,7 @@ export default function PMDashboard() {
   const handleDeleteTask = async (id: number) => {
     if (!confirm('Delete this task?')) return;
     const token = localStorage.getItem('token');
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tasks/${id}`, {
+    const res = await fetch(`https://backend-xi-orcin-43.vercel.app/api/tasks/${id}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` }
     });
