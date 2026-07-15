@@ -107,6 +107,29 @@ app.get('/api/seed', async (req, res) => {
   }
 });
 
+app.get('/api/seed-dependencies', async (req, res) => {
+  try {
+    const tasks = await prisma.task.findMany({ orderBy: { id: 'asc' } });
+    if (tasks.length < 5) return res.json({ message: 'Not enough tasks to create dependencies' });
+
+    // Link task 1 -> 2, 2 -> 3, 3 -> 4, 1 -> 5
+    await prisma.task.update({ where: { id: tasks[1].id }, data: { dependsOn: { connect: [{ id: tasks[0].id }] } } });
+    await prisma.task.update({ where: { id: tasks[2].id }, data: { dependsOn: { connect: [{ id: tasks[1].id }] } } });
+    await prisma.task.update({ where: { id: tasks[3].id }, data: { dependsOn: { connect: [{ id: tasks[2].id }] } } });
+    await prisma.task.update({ where: { id: tasks[4].id }, data: { dependsOn: { connect: [{ id: tasks[0].id }] } } });
+    
+    // Some links for project 2 tasks (around index 8+)
+    if (tasks.length > 10) {
+      await prisma.task.update({ where: { id: tasks[9].id }, data: { dependsOn: { connect: [{ id: tasks[8].id }] } } });
+      await prisma.task.update({ where: { id: tasks[10].id }, data: { dependsOn: { connect: [{ id: tasks[9].id }] } } });
+    }
+
+    res.json({ success: true, message: 'Dependencies linked successfully!' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error instanceof Error ? error.message : String(error) });
+  }
+});
+
 if (process.env.NODE_ENV !== 'test') {
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
