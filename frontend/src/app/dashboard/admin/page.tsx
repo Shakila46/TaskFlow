@@ -41,7 +41,7 @@ export default function AdminDashboard() {
 
   const fetchAllTasks = async (token: string) => {
     try {
-      const res = await fetch('http://localhost:5000/api/tasks', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tasks`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) setAllTasks(await res.json());
@@ -52,7 +52,7 @@ export default function AdminDashboard() {
 
   const fetchUsers = async (token: string) => {
     try {
-      const res = await fetch('http://localhost:5000/api/users', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) setUsers(await res.json());
@@ -66,7 +66,7 @@ export default function AdminDashboard() {
     setLoading(true);
     const token = localStorage.getItem('token');
     try {
-      const res = await fetch('http://localhost:5000/api/users', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -95,7 +95,7 @@ export default function AdminDashboard() {
       const payload: any = {};
       payload[field] = value;
       
-      const res = await fetch(`http://localhost:5000/api/users/${userId}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/${userId}`, {
         method: 'PATCH',
         headers: { 
           'Content-Type': 'application/json',
@@ -117,7 +117,7 @@ export default function AdminDashboard() {
     if (!confirm('Are you sure you want to delete this user?')) return;
     const token = localStorage.getItem('token');
     try {
-      const res = await fetch(`http://localhost:5000/api/users/${userId}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/${userId}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });

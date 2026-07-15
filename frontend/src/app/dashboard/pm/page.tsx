@@ -48,13 +48,13 @@ export default function PMDashboard() {
 
   const fetchData = async (token: string) => {
     try {
-      const projRes = await fetch('http://localhost:5000/api/projects', {
+      const projRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/projects`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      const taskRes = await fetch('http://localhost:5000/api/tasks', {
+      const taskRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tasks`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      const userRes = await fetch('http://localhost:5000/api/users', {
+      const userRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
@@ -87,7 +87,7 @@ export default function PMDashboard() {
         scope: newProject.scope || undefined,
         goals: newProject.goals || undefined
       };
-      const res = await fetch('http://localhost:5000/api/projects', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/projects`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -136,7 +136,7 @@ export default function PMDashboard() {
         dependencyIds: newTask.dependencyIds
       };
       
-      const url = editingTaskId ? `http://localhost:5000/api/tasks/${editingTaskId}` : 'http://localhost:5000/api/tasks';
+      const url = editingTaskId ? `${process.env.NEXT_PUBLIC_API_URL}/tasks/${editingTaskId}` : `${process.env.NEXT_PUBLIC_API_URL}/tasks`;
       const method = editingTaskId ? 'PUT' : 'POST';
       
       const res = await fetch(url, {
@@ -163,7 +163,7 @@ export default function PMDashboard() {
   const handleDeleteTask = async (id: number) => {
     if (!confirm('Delete this task?')) return;
     const token = localStorage.getItem('token');
-    const res = await fetch(`http://localhost:5000/api/tasks/${id}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tasks/${id}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` }
     });
