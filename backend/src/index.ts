@@ -176,6 +176,15 @@ app.get('/api/seed', async (req, res) => {
   }
 });
 
+app.get('/api/debug-users', async (req, res) => {
+  try {
+    const users = await prisma.user.findMany();
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
 if (process.env.NODE_ENV !== 'test') {
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
