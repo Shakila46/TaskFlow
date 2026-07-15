@@ -39,23 +39,23 @@ app.get('/api/seed', async (req, res) => {
 
     const hashedPassword = await bcrypt.hash('123456', 10);
 
-    // Create 15 Dummy Users with comprehensive details
+    // Create 15 Dummy Users with comprehensive details matching UI dropdown EXACTLY
     const usersData = [
-      { name: 'Alice Admin', email: 'admin@cyphlab.com', password: hashedPassword, role: 'ADMIN', designation: 'Chief Technology Officer' },
-      { name: 'Bob Manager', email: 'manager@cyphlab.com', password: hashedPassword, role: 'PROJECT_MANAGER', designation: 'Senior Project Manager' },
-      { name: 'Charlie Leader', email: 'leader@cyphlab.com', password: hashedPassword, role: 'TEAM_LEADER', designation: 'Lead Software Engineer' },
-      { name: 'David Member', email: 'david@cyphlab.com', password: hashedPassword, role: 'TEAM_MEMBER', designation: 'Frontend Developer' },
-      { name: 'Eve Member', email: 'eve@cyphlab.com', password: hashedPassword, role: 'TEAM_MEMBER', designation: 'Backend Developer' },
-      { name: 'Frank Designer', email: 'frank@cyphlab.com', password: hashedPassword, role: 'TEAM_MEMBER', designation: 'UI/UX Designer' },
-      { name: 'Grace Sponsor', email: 'grace@cyphlab.com', password: hashedPassword, role: 'PROJECT_SPONSOR', designation: 'Investor / Director' },
-      { name: 'Harry Manager', email: 'harry@cyphlab.com', password: hashedPassword, role: 'PROJECT_MANAGER', designation: 'Operations Manager' },
-      { name: 'Ivy Leader', email: 'ivy@cyphlab.com', password: hashedPassword, role: 'TEAM_LEADER', designation: 'QA Lead' },
+      { name: 'Alice Admin', email: 'admin@cyphlab.com', password: hashedPassword, role: 'ADMIN', designation: 'Tech Lead / Software Architect' },
+      { name: 'Bob Manager', email: 'manager@cyphlab.com', password: hashedPassword, role: 'PROJECT_MANAGER', designation: 'Business Analyst (BA)' },
+      { name: 'Charlie Leader', email: 'leader@cyphlab.com', password: hashedPassword, role: 'TEAM_LEADER', designation: 'Fullstack Engineer' },
+      { name: 'David Member', email: 'david@cyphlab.com', password: hashedPassword, role: 'TEAM_MEMBER', designation: 'Front-end Engineer' },
+      { name: 'Eve Member', email: 'eve@cyphlab.com', password: hashedPassword, role: 'TEAM_MEMBER', designation: 'Back-end Engineer' },
+      { name: 'Frank Designer', email: 'frank@cyphlab.com', password: hashedPassword, role: 'TEAM_MEMBER', designation: 'UX/UI Designer' },
+      { name: 'Grace Sponsor', email: 'grace@cyphlab.com', password: hashedPassword, role: 'PROJECT_SPONSOR', designation: 'Business Analyst (BA)' },
+      { name: 'Harry Manager', email: 'harry@cyphlab.com', password: hashedPassword, role: 'PROJECT_MANAGER', designation: 'Business Analyst (BA)' },
+      { name: 'Ivy Leader', email: 'ivy@cyphlab.com', password: hashedPassword, role: 'TEAM_LEADER', designation: 'QA Engineer' },
       { name: 'Jack Tester', email: 'jack@cyphlab.com', password: hashedPassword, role: 'TEAM_MEMBER', designation: 'QA Engineer' },
-      { name: 'Karen DevOps', email: 'karen@cyphlab.com', password: hashedPassword, role: 'TEAM_MEMBER', designation: 'DevOps Engineer' },
-      { name: 'Leo Member', email: 'leo@cyphlab.com', password: hashedPassword, role: 'TEAM_MEMBER', designation: 'Fullstack Developer' },
-      { name: 'Mona Sponsor', email: 'mona@cyphlab.com', password: hashedPassword, role: 'PROJECT_SPONSOR', designation: 'Client Representative' },
-      { name: 'Nina Data', email: 'nina@cyphlab.com', password: hashedPassword, role: 'TEAM_MEMBER', designation: 'Data Scientist' },
-      { name: 'Oscar Writer', email: 'oscar@cyphlab.com', password: hashedPassword, role: 'TEAM_MEMBER', designation: 'Technical Writer' },
+      { name: 'Karen DevOps', email: 'karen@cyphlab.com', password: hashedPassword, role: 'TEAM_MEMBER', designation: 'DevOps / Cloud Engineer' },
+      { name: 'Leo Member', email: 'leo@cyphlab.com', password: hashedPassword, role: 'TEAM_MEMBER', designation: 'Fullstack Engineer' },
+      { name: 'Mona Sponsor', email: 'mona@cyphlab.com', password: hashedPassword, role: 'PROJECT_SPONSOR', designation: 'Business Analyst (BA)' },
+      { name: 'Nina Data', email: 'nina@cyphlab.com', password: hashedPassword, role: 'TEAM_MEMBER', designation: 'AI / ML Engineer' },
+      { name: 'Oscar Writer', email: 'oscar@cyphlab.com', password: hashedPassword, role: 'TEAM_MEMBER', designation: 'Tech Lead / Software Architect' },
     ];
 
     const createdUsers = [];
