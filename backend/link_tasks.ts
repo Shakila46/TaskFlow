@@ -4,14 +4,13 @@ async function run() {
   const tasks = await prisma.task.findMany({ orderBy: { id: 'asc' } });
   
   // Group by project
-  const byProject = {};
+  const byProject: Record<number, any[]> = {};
   for (const t of tasks) {
     if (!byProject[t.projectId]) byProject[t.projectId] = [];
     byProject[t.projectId].push(t);
   }
 
-  for (const projectId in byProject) {
-    const pTasks = byProject[projectId];
+  for (const pTasks of Object.values(byProject)) {
     for (let i = 1; i < pTasks.length; i++) {
       const prev = pTasks[i - 1];
       const curr = pTasks[i];
