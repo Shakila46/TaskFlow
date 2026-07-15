@@ -89,6 +89,92 @@ app.get('/api/create-tables', async (req, res) => {
     res.status(500).json({ success: false, error: error instanceof Error ? error.message : String(error) });
   }
 });
+import prisma from './utils/prisma.js';
+import bcrypt from 'bcryptjs';
+
+app.get('/api/seed', async (req, res) => {
+  try {
+    const existingUsers = await prisma.user.count();
+    if (existingUsers > 0) {
+      return res.json({ message: 'Dummy data already exists!' });
+    }
+
+    const hashedPassword = await bcrypt.hash('123456', 10);
+
+    // Create Dummy Users
+    const admin = await prisma.user.create({
+      data: {
+        name: 'Admin User',
+        email: 'admin@cyphlab.com',
+        password: hashedPassword,
+        role: 'ADMIN',
+        designation: 'System Administrator'
+      }
+    });
+
+    const manager = await prisma.user.create({
+      data: {
+        name: 'Project Manager',
+        email: 'manager@cyphlab.com',
+        password: hashedPassword,
+        role: 'PROJECT_MANAGER',
+        designation: 'Senior Manager'
+      }
+    });
+
+    const member = await prisma.user.create({
+      data: {
+        name: 'Team Member',
+        email: 'user@cyphlab.com',
+        password: hashedPassword,
+        role: 'TEAM_MEMBER',
+        designation: 'Frontend Developer'
+      }
+    });
+
+    // Create a Dummy Project
+    const project = await prisma.project.create({
+      data: {
+        title: 'CyphLab Rebranding',
+        description: 'Complete redesign of CyphLab website and assets.',
+        managerId: manager.id,
+        members: {
+          create: [
+            { userId: manager.id },
+            { userId: member.id }
+          ]
+        }
+      }
+    });
+
+    // Create some Tasks
+    await prisma.task.createMany({
+      data: [
+        {
+          title: 'Design UI Mockups',
+          description: 'Create Figma mockups for the new homepage',
+          status: 'IN_PROGRESS',
+          priority: 'HIGH',
+          projectId: project.id,
+          assigneeId: member.id,
+          dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+        },
+        {
+          title: 'Setup Database',
+          description: 'Configure Supabase and Prisma schema',
+          status: 'DONE',
+          priority: 'HIGH',
+          projectId: project.id,
+          assigneeId: admin.id
+        }
+      ]
+    });
+
+    res.json({ success: true, message: 'Dummy data added successfully!' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error instanceof Error ? error.message : String(error) });
+  }
+});
 
 if (process.env.NODE_ENV !== 'test') {
   app.listen(PORT, () => {
